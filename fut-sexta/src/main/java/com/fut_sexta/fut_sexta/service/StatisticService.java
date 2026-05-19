@@ -1,7 +1,7 @@
 package com.fut_sexta.fut_sexta.service;
 
 
-import com.fut_sexta.fut_sexta.DTO.ArtilheiroDTO;
+import com.fut_sexta.fut_sexta.DTO.output.ArtilheiroDTO;
 import com.fut_sexta.fut_sexta.model.Match;
 import com.fut_sexta.fut_sexta.repository.GoalRepository;
 import com.fut_sexta.fut_sexta.repository.MatchRepository;

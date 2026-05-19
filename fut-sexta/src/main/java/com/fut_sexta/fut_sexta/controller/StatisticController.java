@@ -1,8 +1,8 @@
 package com.fut_sexta.fut_sexta.controller;
 
 
-import com.fut_sexta.fut_sexta.DTO.ArtilheiroDTO;
-import com.fut_sexta.fut_sexta.DTO.MatchOutputDTO;
+import com.fut_sexta.fut_sexta.DTO.output.ArtilheiroDTO;
+import com.fut_sexta.fut_sexta.DTO.output.MatchOutputDTO;
 import com.fut_sexta.fut_sexta.mapper.MatchMapper;
 import com.fut_sexta.fut_sexta.service.StatisticService;
 import lombok.RequiredArgsConstructor;

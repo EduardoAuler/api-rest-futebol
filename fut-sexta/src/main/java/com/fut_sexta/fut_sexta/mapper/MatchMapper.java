@@ -1,9 +1,8 @@
 package com.fut_sexta.fut_sexta.mapper;
 
-import com.fut_sexta.fut_sexta.DTO.MatchInputDTO;
-import com.fut_sexta.fut_sexta.DTO.MatchOutputDTO;
+import com.fut_sexta.fut_sexta.DTO.input.MatchInputDTO;
+import com.fut_sexta.fut_sexta.DTO.output.MatchOutputDTO;
 import com.fut_sexta.fut_sexta.model.Match;
-import com.fut_sexta.fut_sexta.service.MatchService;
 import com.fut_sexta.fut_sexta.service.TeamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

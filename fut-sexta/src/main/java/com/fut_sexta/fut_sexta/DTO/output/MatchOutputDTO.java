@@ -1,4 +1,4 @@
-package com.fut_sexta.fut_sexta.DTO;
+package com.fut_sexta.fut_sexta.DTO.output;
 
 import java.time.LocalDate;
 

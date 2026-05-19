@@ -1,11 +1,12 @@
 package com.fut_sexta.fut_sexta.controller;
 
 
-import com.fut_sexta.fut_sexta.DTO.GoalDTO;
-import com.fut_sexta.fut_sexta.DTO.MatchInputDTO;
-import com.fut_sexta.fut_sexta.DTO.MatchOutputDTO;
+import com.fut_sexta.fut_sexta.DTO.input.GoalDTO;
+import com.fut_sexta.fut_sexta.DTO.input.MatchInputDTO;
+import com.fut_sexta.fut_sexta.DTO.output.MatchOutputDTO;
 import com.fut_sexta.fut_sexta.mapper.MatchMapper;
 import com.fut_sexta.fut_sexta.service.MatchService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class MatchController {
     private final MatchMapper mapper;
 
     @PostMapping
-    public ResponseEntity<MatchOutputDTO> createMatch(@RequestBody MatchInputDTO inputDTO){
+    public ResponseEntity<MatchOutputDTO> createMatch(@RequestBody @Valid MatchInputDTO inputDTO){
         var match = service.createMatch(inputDTO.teamAId(), inputDTO.teamBId(), inputDTO.minutos());
 
         var dto = mapper.toDTO(match);
@@ -36,7 +37,7 @@ public class MatchController {
     }
 
     @PostMapping("/add-goal")
-    public ResponseEntity<MatchOutputDTO> addGoal(@RequestBody GoalDTO goalDto){
+    public ResponseEntity<MatchOutputDTO> addGoal(@RequestBody @Valid GoalDTO goalDto){
         MatchOutputDTO dto = mapper.toDTO(service.addGoal(goalDto.matchId(),
                 goalDto.playerId(),goalDto.side()));
 
