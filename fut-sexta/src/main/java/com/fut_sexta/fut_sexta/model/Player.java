@@ -23,9 +23,14 @@ public class Player {
     @Column(nullable = false, unique = true)
     private String name;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    public Player(String name){
+
+    public Player(String name, User user){
         this.name = name;
+        this.user = user;
     }
 
 }

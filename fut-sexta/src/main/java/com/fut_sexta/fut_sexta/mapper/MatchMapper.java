@@ -14,11 +14,6 @@ public class MatchMapper {
 
     private final TeamService service;
 
-    public Match toEntity(MatchInputDTO input){
-        String teamA = service.getById(input.teamAId()).getName();
-        String teamB = service.getById(input.teamBId()).getName();
-        return new Match(teamA, teamB, input.minutos());
-    }
 
     public MatchOutputDTO toDTO(Match match){
         return new MatchOutputDTO(match.getTeamAName(), match.getTeamBName(),

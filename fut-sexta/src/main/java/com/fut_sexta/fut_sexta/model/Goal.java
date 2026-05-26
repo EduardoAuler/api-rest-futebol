@@ -26,10 +26,15 @@ public class Goal {
     @Enumerated(EnumType.STRING)
     private TeamSide teamSide;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    public Goal(Player player, Match match, TeamSide teamSide){
+
+    public Goal(Player player, Match match, TeamSide teamSide, User user){
         this.player = player;
         this.match = match;
         this.teamSide = teamSide;
+        this.user = user;
     }
 }

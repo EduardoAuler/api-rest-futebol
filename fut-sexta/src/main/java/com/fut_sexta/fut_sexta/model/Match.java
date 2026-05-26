@@ -36,8 +36,12 @@ public class Match {
 
     private LocalDate localDate;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    public Match(String teamAName, String teamBName, int minutos){
+
+    public Match(String teamAName, String teamBName, int minutos, User user){
         this.teamAName = teamAName;
         this.teamBName = teamBName;
 
@@ -49,6 +53,8 @@ public class Match {
 
         finished = false;
         localDate = LocalDate.now();
+
+        this.user = user;
     }
 
     public void removeGoal(Goal goal) {

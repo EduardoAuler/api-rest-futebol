@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -27,4 +30,14 @@ public class User {
 
     @Column(name = "password", nullable = false)
     private String password;
+
+
+    @OneToMany(mappedBy = "user")
+    private List<Player> players = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Match> matches = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Goal> goals = new ArrayList<>();
 }

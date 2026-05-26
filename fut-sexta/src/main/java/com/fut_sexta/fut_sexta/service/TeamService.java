@@ -7,6 +7,7 @@ import com.fut_sexta.fut_sexta.exception.PlayerNotInTeamException;
 import com.fut_sexta.fut_sexta.exception.TeamNotFoundException;
 import com.fut_sexta.fut_sexta.model.Player;
 import com.fut_sexta.fut_sexta.model.Team;
+import com.fut_sexta.fut_sexta.model.User;
 import com.fut_sexta.fut_sexta.repository.TeamRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -21,28 +22,29 @@ public class TeamService {
 
     private final TeamRepository teamRepository;
     private final PlayerService playerService;
+    private final CurrentUserService currentUserService;
 
 
 
     public Team getById(Long id){
-        return teamRepository.findById(id).orElseThrow(() -> new TeamNotFoundException("Time não encontrado"));
+       return teamRepository.findByIdAndUserId(id, currentUser().getId()).orElseThrow(() -> new TeamNotFoundException("Time não encontrado"));
     }
 
 
     public Team createTeam(String name){
-        if (teamRepository.existsByName(name)) throw new NameAlreadyExistsException("Nome já cadastrado");
+        if (teamRepository.existsByNameAndUserId(name, currentUser().getId())) throw new NameAlreadyExistsException("Nome já cadastrado");
 
-        return teamRepository.save(new Team(name));
+        return teamRepository.save(new Team(name, currentUser()));
     }
 
     public List<Team> getTeams(){
-        return teamRepository.findAll();
+        return teamRepository.findByUserId(currentUser().getId());
     }
 
 
     @Transactional
     public Team changeName(Long id, String name){
-        if (teamRepository.existsByName(name)) throw new NameAlreadyExistsException("Nome já cadastrado");
+        if (teamRepository.existsByNameAndUserId(name, currentUser().getId())) throw new NameAlreadyExistsException("Nome já cadastrado");
 
         Team team = getById(id);
         team.setName(name);
@@ -55,7 +57,11 @@ public class TeamService {
 
         Player player = playerService.getById(playerId);
 
-        if (team.getPlayers().contains(player)){
+        boolean alreadyExists = team.getPlayers()
+                .stream()
+                .anyMatch(p -> p.getId().equals(playerId));
+
+        if (alreadyExists){//tirei o .contains pq pode dar conflito devido ao multi-tenant
             throw new PlayerAlreadyInTeamException("Player já está no time");
         }
 
@@ -85,6 +91,11 @@ public class TeamService {
         Team team = getById(id);
 
         teamRepository.delete(team);
+    }
+
+
+    private User currentUser(){
+        return currentUserService.getCurrentUser();
     }
 
 }

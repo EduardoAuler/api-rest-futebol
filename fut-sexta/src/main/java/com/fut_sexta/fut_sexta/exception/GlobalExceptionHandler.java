@@ -53,6 +53,11 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(SameTeamMatchException.class)
+    public ResponseEntity<ErrorResponse> SameTeamMatchHandler(SameTeamMatchException ex){
+        return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
 
 
     private ResponseEntity<ErrorResponse> buildErrorResponse(String message, HttpStatus status){

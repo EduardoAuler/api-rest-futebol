@@ -1,8 +1,9 @@
 package com.fut_sexta.fut_sexta.DTO.input;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-public record MatchInputDTO(@NotBlank(message = "Id obrigatório") Long teamAId,
-                            @NotBlank(message = "Id obrigatório") Long teamBId,
-                            @NotBlank(message = "Tempo obrigatório") int minutos) {
+public record MatchInputDTO(@NotNull(message = "Id obrigatório") Long teamAId,
+                            @NotNull(message = "Id obrigatório") Long teamBId,
+                            @NotNull(message = "Tempo obrigatório") int minutos) {
 }

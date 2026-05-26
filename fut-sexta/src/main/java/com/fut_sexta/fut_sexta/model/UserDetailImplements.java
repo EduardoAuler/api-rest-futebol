@@ -1,6 +1,7 @@
 package com.fut_sexta.fut_sexta.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,7 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-
+@Getter
 @AllArgsConstructor
 public class UserDetailImplements implements UserDetails {
 
@@ -37,7 +38,6 @@ public class UserDetailImplements implements UserDetails {
     public String getUsername() {
         return username;
     }
-
 
 
 

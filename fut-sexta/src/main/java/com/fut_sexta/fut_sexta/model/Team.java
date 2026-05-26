@@ -30,9 +30,14 @@ public class Team {
     )
     private List<Player> players;
 
-    public Team(String name){
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    public Team(String name, User user){
         this.name = name;
         players = new ArrayList<>();
+        this.user = user;
     }
 
     public void addPlayer(Player player) {

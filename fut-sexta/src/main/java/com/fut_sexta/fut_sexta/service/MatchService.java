@@ -3,10 +3,8 @@ package com.fut_sexta.fut_sexta.service;
 
 import com.fut_sexta.fut_sexta.exception.MatchAlreadyFinishedException;
 import com.fut_sexta.fut_sexta.exception.MatchNotFoundException;
-import com.fut_sexta.fut_sexta.model.Goal;
-import com.fut_sexta.fut_sexta.model.Match;
-import com.fut_sexta.fut_sexta.model.Player;
-import com.fut_sexta.fut_sexta.model.TeamSide;
+import com.fut_sexta.fut_sexta.exception.SameTeamMatchException;
+import com.fut_sexta.fut_sexta.model.*;
 import com.fut_sexta.fut_sexta.repository.GoalRepository;
 import com.fut_sexta.fut_sexta.repository.MatchRepository;
 import com.fut_sexta.fut_sexta.repository.PlayerRepository;
@@ -23,23 +21,25 @@ public class MatchService {
     private final PlayerService playerService;
     private final GoalRepository goalRepository;
     private final TeamService teamService;
+    private final CurrentUserService currentUserService;
 
 
-    public Match getById(Long id){
-        return matchRepository.findById(id).orElseThrow(() -> new MatchNotFoundException("Partida não encontrada"));
+    public Match getById(Long id){return matchRepository.findByIdAndUserId(id, currentUser().getId()).orElseThrow(() -> new MatchNotFoundException("Partida não encontrada"));
     }
 
-    public void checkMatchIsFinished(Match match){
+    private void checkMatchIsFinished(Match match){
         if (match.isFinished()) throw new MatchAlreadyFinishedException("Partida já encerrada");
     }
 
 
 
     public Match createMatch(Long teamAId, Long teamBId, int minutos){
+        if(teamAId.equals(teamBId)) throw new SameTeamMatchException("Os times devem ser diferentes");
+
         String teamA = teamService.getById(teamAId).getName();
         String teamB = teamService.getById(teamBId).getName();
 
-        Match match = new Match(teamA,teamB,minutos);
+        Match match = new Match(teamA,teamB,minutos, currentUser());
         return matchRepository.save(match);
     }
 
@@ -57,14 +57,13 @@ public class MatchService {
 
     @Transactional
     public Match addGoal(Long matchId, Long playerId, TeamSide side){
-        Match match = matchRepository.findById(matchId)
-                .orElseThrow(() -> new MatchNotFoundException("Partida não encontrada"));
+        Match match = getById(matchId);
 
         checkMatchIsFinished(match);
 
         Player player = playerService.getById(playerId);
 
-        Goal goal = new Goal(player, match, side);
+        Goal goal = new Goal(player, match, side, currentUser());
 
         if (side == TeamSide.A){
             match.setScoreA(match.getScoreA() + 1);
@@ -81,7 +80,7 @@ public class MatchService {
 
     @Transactional
     public Match removeGoal(Long goalId){
-        Goal goal = goalRepository.findById(goalId).orElseThrow(() -> new EntityNotFoundException("Gol não encontrado"));
+        Goal goal = goalRepository.findByIdAndUserId(goalId, currentUser().getId()).orElseThrow(() -> new EntityNotFoundException("Gol não encontrado"));
 
         Match match = goal.getMatch();
 
@@ -101,4 +100,10 @@ public class MatchService {
 
         return match;
     }
+
+
+    private User currentUser(){
+        return currentUserService.getCurrentUser();
+    }
+
 }
