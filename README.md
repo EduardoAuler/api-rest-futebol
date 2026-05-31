@@ -1,6 +1,6 @@
 # ⚽ API REST Futebol
 
-Backend desenvolvido com Java + Spring Boot para gerenciamento de times, jogadores, partidas e estatísticas de futebol através de uma API REST.
+Backend desenvolvido com Java + Spring Boot para gerenciamento de partidas de futebol, times, jogadores e estatísticas através de uma API REST.
 
 ---
 
@@ -10,6 +10,7 @@ Backend desenvolvido com Java + Spring Boot para gerenciamento de times, jogador
 * Spring Boot
 * Spring Data JPA
 * Hibernate
+* Spring Security
 * Maven
 * MySQL
 * Jakarta Validation
@@ -19,33 +20,36 @@ Backend desenvolvido com Java + Spring Boot para gerenciamento de times, jogador
 
 # 📚 Funcionalidades
 
-* CRUD de times
-* CRUD de jogadores
-* Gerenciamento de partidas
-* Sistema de gols
+* Autenticação de usuários
+* Cadastro de times
+* Cadastro de jogadores
+* Criação de partidas
+* Controle de gols durante a partida
+* Finalização de partidas
 * Histórico de partidas
 * Ranking de artilheiros
-* Autenticação
-* Relacionamentos entre entidades
-* Persistência com JPA/Hibernate
+* Detalhamento dos gols por partida
+* Relacionamentos JPA
+* Persistência de dados
 
 ---
 
 # 🏗️ Arquitetura
 
-O projeto segue arquitetura em camadas:
+O projeto segue uma arquitetura em camadas:
 
 ```text
 Controller -> Service -> Repository -> Database
 ```
 
-## Camadas
+### Camadas
 
 * **Controller** → recebe requisições HTTP
 * **Service** → regras de negócio
-* **Repository** → acesso ao banco
-* **Entity/Model** → entidades do sistema
-* **DTO** → comunicação da API
+* **Repository** → acesso aos dados
+* **Entity** → entidades persistidas
+* **DTO** → comunicação entre API e cliente
+* **Mapper** → conversão entre entidades e DTOs
 
 ---
 
@@ -55,69 +59,83 @@ Controller -> Service -> Repository -> Database
 src
  └── main
      ├── java
-     │    └── com/seu_pacote
-     │         ├── controller
-     │         ├── service
-     │         ├── repository
-     │         ├── model
-     │         ├── dto
-     │         ├── mapper
-     │         └── security
+     │
+     ├── controller
+     ├── service
+     ├── repository
+     ├── model
+     ├── dto
+     ├── mapper
+     ├── security
+     └── exception
      │
      └── resources
-          ├── application.properties
+         └── application.properties
 ```
 
 ---
 
 # ⚙️ Como executar
 
-## 1. Clone o repositório
+## 1. Clonar o repositório
 
 ```bash
 git clone https://github.com/EduardoAuler/api-rest-futebol.git
 ```
 
-## 2. Entre na pasta
+## 2. Entrar na pasta
 
 ```bash
 cd api-rest-futebol
 ```
 
-## 3. Configure o banco de dados
+## 3. Configurar banco de dados
 
 No arquivo `application.properties`:
 
 ```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/futebol_db
+spring.datasource.url=jdbc:mysql://localhost:3306/futebol
 spring.datasource.username=SEU_USUARIO
 spring.datasource.password=SUA_SENHA
 ```
 
----
-
-# ▶️ Executando o projeto
-
-Execute com Maven:
+## 4. Executar aplicação
 
 ```bash
 ./mvnw spring-boot:run
 ```
 
-Ou execute a classe principal pela IDE.
+ou execute a classe principal pela IDE.
 
 ---
 
-# 🌐 Endpoints
-
 # 🔐 Autenticação
 
-| Método | Endpoint         | Descrição      |
-| ------ | ---------------- | -------------- |
-| POST   | `/auth/login`    | Realiza login  |
-| POST   | `/auth/register` | Cria uma conta |
+## Endpoints
 
-## Exemplo Login/Register
+| Método | Endpoint         | Descrição         |
+| ------ | ---------------- | ----------------- |
+| POST   | `/auth/register` | Registrar usuário |
+| POST   | `/auth/login`    | Realizar login    |
+
+### Registro
+
+```http
+POST /auth/register
+```
+
+```json
+{
+  "username": "eduardo",
+  "password": "123456"
+}
+```
+
+### Login
+
+```http
+POST /auth/login
+```
 
 ```json
 {
@@ -128,45 +146,20 @@ Ou execute a classe principal pela IDE.
 
 ---
 
-# ⚽ Partidas
-
-| Método | Endpoint                  | Descrição        |
-| ------ | ------------------------- | ---------------- |
-| POST   | `/match`                  | Cria partida     |
-| PATCH  | `/match/finish/{id}`      | Finaliza partida |
-| POST   | `/match/add-goal`         | Adiciona gol     |
-| POST   | `/match/remove-goal/{id}` | Remove gol       |
-
-## Criar partida
-
-```json
-{
-  "teamAId": 1,
-  "teamBId": 2,
-  "minutos": 90
-}
-```
-
-## Adicionar gol
-
-```json
-{
-  "matchId": 1,
-  "playerId": 5,
-  "side": "A"
-}
-```
-
----
-
 # 👤 Jogadores
 
-| Método | Endpoint  | Descrição       |
-| ------ | --------- | --------------- |
-| POST   | `/player` | Cria jogador    |
-| GET    | `/player` | Lista jogadores |
+## Endpoints
 
-## Criar jogador
+| Método | Endpoint  | Descrição        |
+| ------ | --------- | ---------------- |
+| POST   | `/player` | Criar jogador    |
+| GET    | `/player` | Listar jogadores |
+
+### Criar jogador
+
+```http
+POST /player
+```
 
 ```json
 {
@@ -178,16 +171,22 @@ Ou execute a classe principal pela IDE.
 
 # 🛡️ Times
 
-| Método | Endpoint                       | Descrição                |
-| ------ | ------------------------------ | ------------------------ |
-| POST   | `/team`                        | Cria time                |
-| GET    | `/team`                        | Lista times              |
-| PATCH  | `/team/{id}`                   | Altera nome do time      |
-| PUT    | `/team/{id}/add/{playerId}`    | Adiciona jogador ao time |
-| PUT    | `/team/{id}/remove/{playerId}` | Remove jogador do time   |
-| DELETE | `/team/{id}`                   | Remove time              |
+## Endpoints
 
-## Criar time
+| Método | Endpoint                       | Descrição                 |
+| ------ | ------------------------------ | ------------------------- |
+| POST   | `/team`                        | Criar time                |
+| GET    | `/team`                        | Listar times              |
+| PATCH  | `/team/{id}`                   | Alterar nome do time      |
+| PUT    | `/team/{id}/add/{playerId}`    | Adicionar jogador ao time |
+| PUT    | `/team/{id}/remove/{playerId}` | Remover jogador do time   |
+| DELETE | `/team/{id}`                   | Excluir time              |
+
+### Criar time
+
+```http
+POST /team
+```
 
 ```json
 {
@@ -195,7 +194,11 @@ Ou execute a classe principal pela IDE.
 }
 ```
 
-## Alterar nome do time
+### Alterar nome
+
+```http
+PATCH /team/1
+```
 
 ```json
 {
@@ -205,12 +208,137 @@ Ou execute a classe principal pela IDE.
 
 ---
 
+# ⚽ Partidas
+
+## Endpoints
+
+| Método | Endpoint                  | Descrição         |
+| ------ | ------------------------- | ----------------- |
+| POST   | `/match`                  | Criar partida     |
+| PATCH  | `/match/finish/{id}`      | Finalizar partida |
+| POST   | `/match/add-goal`         | Registrar gol     |
+| POST   | `/match/remove-goal/{id}` | Remover gol       |
+
+### Criar partida
+
+```http
+POST /match
+```
+
+```json
+{
+  "teamAId": 1,
+  "teamBId": 2,
+  "minutos": 60
+}
+```
+
+### Registrar gol
+
+```http
+POST /match/add-goal
+```
+
+```json
+{
+  "matchId": 1,
+  "playerId": 5,
+  "side": "TEAM_A"
+}
+```
+
+### Finalizar partida
+
+```http
+PATCH /match/finish/1
+```
+
+---
+
 # 📊 Estatísticas
 
-| Método | Endpoint                | Descrição             |
-| ------ | ----------------------- | --------------------- |
-| GET    | `/statistic/artilheiro` | Lista artilheiros     |
-| GET    | `/statistic/historico`  | Histórico de partidas |
+## Endpoints
+
+| Método | Endpoint                  | Descrição                    |
+| ------ | ------------------------- | ---------------------------- |
+| GET    | `/statistic/artilheiro`   | Ranking de artilheiros       |
+| GET    | `/statistic/historico`    | Histórico de partidas        |
+| GET    | `/statistic/details/{id}` | Detalhes dos gols da partida |
+
+---
+
+## Ranking de artilheiros
+
+```http
+GET /statistic/artilheiro
+```
+
+### Exemplo de resposta
+
+```json
+[
+  {
+    "name": "Suárez",
+    "goals": 15
+  },
+  {
+    "name": "Cristaldo",
+    "goals": 10
+  }
+]
+```
+
+---
+
+## Histórico de partidas
+
+```http
+GET /statistic/historico
+```
+
+Retorna todas as partidas já finalizadas pelo usuário.
+
+---
+
+## Detalhes de uma partida
+
+```http
+GET /statistic/details/1
+```
+
+Retorna a quantidade de gols marcados por cada jogador em uma partida específica.
+
+### Exemplo de resposta
+
+```json
+[
+  {
+    "name": "Suárez",
+    "goals": 2,
+    "teamSide": "A"
+  },
+  {
+    "name": "Cristaldo",
+    "goals": 1,
+    "teamSide": "A"
+  },
+  {
+    "name": "Valencia",
+    "goals": 1,
+    "teamSide": "B"
+  }
+]
+```
+
+### Campos retornados
+
+| Campo    | Tipo   | Descrição                   |
+| -------- | ------ | --------------------------- |
+| name     | String | Nome do jogador             |
+| goals    | Long   | Quantidade de gols          |
+| teamSide | Enum   | Time ao qual o gol pertence |
+
+Essa consulta utiliza uma projeção DTO com JPQL e agregação através de `COUNT()` e `GROUP BY`, retornando o total de gols marcados por cada jogador na partida.
 
 ---
 
@@ -245,55 +373,52 @@ Essa abordagem evita:
 
 # 🗄️ Relacionamentos
 
-## Team 1:N Player
+## Team → Players
 
 ```text
-Um time possui vários jogadores
-Um jogador pertence a um time
+1 Time possui N Jogadores
+1 Jogador pertence a 1 Time
 ```
 
-## Match
+## Match → Goals
 
 ```text
-Uma partida possui:
-- Time A
-- Time B
-- Gols
-- Tempo da partida
-- Histórico de eventos
+1 Partida possui N Gols
+1 Gol pertence a 1 Partida
+```
+
+## Player → Goals
+
+```text
+1 Jogador pode possuir N Gols
+1 Gol pertence a 1 Jogador
 ```
 
 ---
 
-# ✅ Conceitos aplicados
+# 🧠 Conceitos aplicados
 
 * API REST
-* HTTP Methods
-* DTOs
-* Relacionamentos JPA
+* Spring Boot
+* Spring Security
+* DTO Pattern
+* Mapper Pattern
+* JPA/Hibernate
 * Bean Validation
-* Injeção de dependência
-* Tratamento de exceções
+* Relacionamentos JPA
+* Injeção de Dependência
+* Tratamento Global de Exceções
+* JPQL
+* Projeções DTO
+* COUNT()
+* GROUP BY
+* Consultas customizadas
 * Arquitetura em camadas
-* Autenticação
-* Persistência de dados
 
----
-
-# 📌 Melhorias futuras
-
-* Swagger/OpenAPI
-* Docker
-* Testes automatizados
-* Paginação
-* Deploy na nuvem
-* WebSocket para partidas em tempo real
-
----
 
 # 👨‍💻 Autor
 
-Desenvolvido por Eduardo Auler
+Eduardo Auler
 
 GitHub:
 https://github.com/EduardoAuler
