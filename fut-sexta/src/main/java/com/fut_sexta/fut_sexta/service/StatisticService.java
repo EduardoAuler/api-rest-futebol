@@ -2,6 +2,7 @@ package com.fut_sexta.fut_sexta.service;
 
 
 import com.fut_sexta.fut_sexta.DTO.output.ArtilheiroDTO;
+import com.fut_sexta.fut_sexta.DTO.output.MatchGoalDetailOutput;
 import com.fut_sexta.fut_sexta.model.Match;
 import com.fut_sexta.fut_sexta.model.User;
 import com.fut_sexta.fut_sexta.repository.GoalRepository;
@@ -28,6 +29,11 @@ public class StatisticService {
         return matchRepository.findByFinishedTrueAndUserId(currentUser().getId());
     }
 
+
+
+    public List<MatchGoalDetailOutput> getMatchGoalDetails(Long id){
+        return goalRepository.findMatchGoalDetails(id, currentUser().getId());
+    }
 
     private User currentUser(){
         return currentUserService.getCurrentUser();

@@ -2,12 +2,14 @@ package com.fut_sexta.fut_sexta.controller;
 
 
 import com.fut_sexta.fut_sexta.DTO.output.ArtilheiroDTO;
+import com.fut_sexta.fut_sexta.DTO.output.MatchGoalDetailOutput;
 import com.fut_sexta.fut_sexta.DTO.output.MatchOutputDTO;
 import com.fut_sexta.fut_sexta.mapper.MatchMapper;
 import com.fut_sexta.fut_sexta.service.StatisticService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,6 +36,13 @@ public class StatisticController {
 
         return ResponseEntity.ok(dto);
     }
+
+
+    @GetMapping("/details/{id}")
+    public ResponseEntity<List<MatchGoalDetailOutput>> getMatchDetails(@PathVariable Long id){
+        return ResponseEntity.ok(service.getMatchGoalDetails(id));
+    }
+
 
 
 }

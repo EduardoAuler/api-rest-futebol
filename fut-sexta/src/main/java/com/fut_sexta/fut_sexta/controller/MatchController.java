@@ -3,6 +3,7 @@ package com.fut_sexta.fut_sexta.controller;
 
 import com.fut_sexta.fut_sexta.DTO.input.GoalDTO;
 import com.fut_sexta.fut_sexta.DTO.input.MatchInputDTO;
+import com.fut_sexta.fut_sexta.DTO.output.MatchGoalDetailOutput;
 import com.fut_sexta.fut_sexta.DTO.output.MatchOutputDTO;
 import com.fut_sexta.fut_sexta.mapper.MatchMapper;
 import com.fut_sexta.fut_sexta.service.MatchService;
@@ -11,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/match")
